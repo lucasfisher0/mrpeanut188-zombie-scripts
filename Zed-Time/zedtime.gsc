@@ -3,7 +3,7 @@
 //|||| Info		: Allows for 'Zed-Time', in which time slows for a short duration after kills.
 //|||| Site		: aviacreations.com
 //|||| Author		: Mrpeanut188
-//|||| Notes		: v1
+//|||| Notes		: v1. This has been known to cause issues with 3+ players, but for me has been working fine with 2 players. Use at your own risk.
 //|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
 /*
