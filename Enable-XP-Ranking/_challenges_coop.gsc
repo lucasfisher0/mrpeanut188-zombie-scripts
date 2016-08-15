@@ -23,8 +23,10 @@
 		
 		After:
 			maps\_challenges_coop::setXPReward( zombie.attacker, zombie.damageloc, zombie.damagemod );
-			zombie.attacker notify("zom_kill");	
+			zombie.attacker notify("zom_kill");
 			
+		Change the settings below to fit your preference.
+
 	Script usage:
 		Call any of the following on a player
 			_challenges_coop.gsc::getRank() returns the current rank.
@@ -42,6 +44,7 @@ init()
 	level.zombie_vars[ "xp_base" ] 			= 5; 		// XP awarded per kill
 	level.zombie_vars[ "xp_headshot" ] 		= 8; 		// XP awarded per headshot kill
 	level.zombie_vars[ "xp_knife" ] 		= 12; 		// XP awarded per melee kill
+	level.zombie_vars[ "xp_announce" ] 		= false; 	// Show rank-up message in the game
 	// ================================= SETTINGS =================================
 
 	rank_init();
@@ -312,7 +315,7 @@ giveRankXP( value, levelEnd )
 
 	self incRankXP( value );
 
-	if ( updateRank() && false == levelEnd )
+	if ( updateRank() && levelEnd == false && level.zombie_vars[ "xp_announce" ] == true)
 		self thread updateRankAnnounceHUD();
 
 	// Set the XP stat after any unlocks, so that if the final stat set gets lost the unlocks won't be gone for good.
