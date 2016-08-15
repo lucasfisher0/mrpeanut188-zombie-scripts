@@ -7,7 +7,8 @@
 //|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 /*
 	Installation:
-		Place in mods/MAPNAME/maps and replace if necessary.
+		Place in mods/MAPNAME/maps and replace if necessary. If an end user gets a crash about unknown function
+		unlockAttachment, they are using a mod menu.
 		
 		mapname.gsc:
 			players = getPlayers();
