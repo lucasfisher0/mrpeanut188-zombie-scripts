@@ -1,9 +1,9 @@
 //|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-//|||| Name			: _challenges_coop.gsc
-//|||| Info			: Enables XP ranking for zombies.
-//|||| Site			: aviacreations.com
+//|||| Name		: _challenges_coop.gsc
+//|||| Info		: Enables XP ranking for zombies. No credit required.
+//|||| Site		: aviacreations.com
 //|||| Author		: Mrpeanut188
-//|||| Notes		: v3 (Solo ranking)
+//|||| Notes		: v3 (Solo ranking by DVAR)
 //|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 /*
 	Use getRank() and getRankXP() to retrieve rank. Solo has seperate ranking progress that is stored in DVARS instead of the stats.
