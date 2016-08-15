@@ -1,7 +1,7 @@
 //|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-//|||| Name			: zedtime.gsc
-//|||| Info			: Allows for 'Zed-Time', in which time slows for a short duration after kills.
-//|||| Site			: aviacreations.com
+//|||| Name		: zedtime.gsc
+//|||| Info		: Allows for 'Zed-Time', in which time slows for a short duration after kills.
+//|||| Site		: aviacreations.com
 //|||| Author		: Mrpeanut188
 //|||| Notes		: v1
 //|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
