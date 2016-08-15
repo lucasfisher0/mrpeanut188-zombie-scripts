@@ -499,3 +499,8 @@ statAdd( dataName, value )
 	curValue = self getStat( int(tableLookup( "mp/playerStatsTable.csv", 1, dataName, 0 )) );
 	self setStat( int(tableLookup( "mp/playerStatsTable.csv", 1, dataName, 0 )), value + curValue );
 }
+
+unlockAttachment( attachmentunlocker )
+{
+	return;
+}
