@@ -25,10 +25,11 @@
 			maps\_challenges_coop::setXPReward( zombie.attacker, zombie.damageloc, zombie.damagemod );
 			zombie.attacker notify("zom_kill");	
 			
-	Retrieving Ranks with your scripts:
-		getRank() returns the current rank.
-		getPrestigeLevel() returns the current prestige.
-		getRankXP() returns current XP.
+	Script usage:
+		Call any of the following on a player
+			_challenges_coop.gsc::getRank() returns the current rank.
+			_challenges_coop.gsc::getPrestigeLevel() returns the current prestige.
+			_challenges_coop.gsc::getRankXP() returns current XP.
 */
 
 #include maps\_utility;
