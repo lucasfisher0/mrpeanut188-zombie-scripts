@@ -3,12 +3,9 @@
 //|||| Info		: Enables XP ranking for zombies. No credit required.
 //|||| Site		: aviacreations.com
 //|||| Author		: Mrpeanut188
-//|||| Notes		: v3 (Solo ranking by DVAR)
+//|||| Notes		: v4 (Proper offline ranking)
 //|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 /*
-	Use getRank() and getRankXP() to retrieve rank. Solo has seperate ranking progress that is stored in DVARS instead of the stats.
-	This means DVARS are NOT saved specific to mod, any maps using this script will share solo XP.
-	
 	Installation:
 		Place in mods/MAPNAME/maps and replace if necessary.
 		
@@ -26,7 +23,12 @@
 		
 		After:
 			maps\_challenges_coop::setXPReward( zombie.attacker, zombie.damageloc, zombie.damagemod );
-			zombie.attacker notify("zom_kill");		
+			zombie.attacker notify("zom_kill");	
+			
+	Retrieving Ranks with your scripts:
+		getRank() returns the current rank.
+		getPrestigeLevel() returns the current prestige.
+		getRankXP() returns current XP.
 */
 
 #include maps\_utility;
@@ -65,11 +67,7 @@ xpWatcher()
 	while (1)
 	{
 		self waittill( "zom_kill" );
-		if (isCoopEPD())
-			giveRankXP( self.xpReward );
-		else
-			giveSoloRankXP( self.xpReward );
-		self.xpReward = level.zombie_vars[ "xp_base" ];
+		giveRankXP( self.xpReward );
 	}
 }
 
@@ -84,10 +82,7 @@ onPlayerConnect()
 	for(;;)
 	{
 		level waittill( "connected", player );
-		if (isCoopEPD())
-			player.rankxp = player statGet( "rankxp" );
-		else
-			player.rankxp = getDvarInt( "rank_xp_solo" );
+		player.rankxp = player statGet( "rankxp" );
 		rankId = player getRankForXp( player getRankXP() );
 		player.rank = rankId;
 	
@@ -118,10 +113,7 @@ onSaveRestored()
 	players = get_players();
 	for( i = 0; i < players.size; i++)
 	{
-		if (isCoopEPD())	
-			players[i].rankxp = players[i] statGet( "rankxp" );
-		else
-			players[i].rankxp = getDvarInt( "rank_xp_solo" );
+		players[i].rankxp = players[i] statGet( "rankxp" );
 			
 		rankId = players[i] getRankForXp( players[i] getRankXP() );
 		players[i].rank = rankId;
@@ -326,22 +318,6 @@ giveRankXP( value, levelEnd )
 	self syncXPStat();
 }
 
-giveSoloRankXP( value, levelEnd )
-{
-	self endon("disconnect");
-
-	if(	!isDefined( levelEnd ) )
-	{
-		levelEnd = false;
-	}	
-	
-	value = (getDvarInt("rank_xp_solo") + int( value * level.xpScale ));
-	setDvar( "rank_xp_solo", value );
-
-	if ( updateRank() && levelEnd == false )
-		self thread updateRankAnnounceHUD();
-}
-
 updateRankAnnounceHUD()
 {
 	self endon("disconnect");
@@ -405,44 +381,24 @@ updateRank()
 		self statSet( "maxxp", int(level.rankTable[rankId][7]) );
 	
 		// set current new rank index to stat#252
-		if (isCoopEPD())
-			self setStat( 252, rankId );
-		else
-			setDvar( "rank_solo", rankId );
+		self setStat( 252, rankId );
 
 		rankId++;
 	}
 
-	if (isCoopEPD())
-		self setRank( newRankId );
-	else
-		setDvar( "rank_solo", newRankId );
-	
+	self setRank( newRankId );	
 	return true;
 }
 
 getPrestigeLevel()
 {
-	if (isCoopEPD())
-		return self statGet( "plevel" );
-	else
-		return getDvarInt( "rank_prestige_solo" );
+	return self statGet( "plevel" );
 }
 
 getRank()
 {	
-	if (isCoopEPD())
-	{
-		rankXp = self.rankxp;
-		rankId = self.rank;
-	}
-	else
-	{
-		rankXp = getDvarInt( "rank_xp_solo" );
-		rankId = getDvarInt( "rank_solo" );
-	}
-	
-
+	rankXp = self.rankxp;
+	rankId = self.rank;
 
 	if ( rankXp < (getRankInfoMinXP( rankId ) + getRankInfoXPAmt( rankId )) )
 		return rankId;
@@ -452,10 +408,7 @@ getRank()
 
 getRankXP()
 {
-	if (isCoopEPD())
-		return self.rankxp;
-	else
-		return getDvarInt("rank_xp_solo");
+	return self.rankxp;
 }
 
 getRankForXp( xpVal )
@@ -519,10 +472,7 @@ incRankXP( amount )
 syncXPStat()
 {
 	xp = self getRankXP();
-	if (isCoopEPD())
-		self statSet( "rankxp", xp );
-	else 
-		setDvar( "rank_xp_solo", xp );
+	self statSet( "rankxp", xp );
 }
 
 doMissionCallback( callback, data )
