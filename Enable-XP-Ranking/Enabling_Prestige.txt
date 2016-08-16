@@ -1,0 +1,12 @@
+How to enable prestige:
+
+Open MAPNAME/mp/ranktable.csv with a good text editor.
+At the bottom, change the 0 after maxprestige to a 10.
+
+In _challenges_coop.gsc settings section, change the prestige option to true instead of false.
+
+//TODO: ADD A PRESTIGE BUTTON
+
+To actually allow for prestige, you'll need to add a button yourself. The tutorial isn't done for this 
+so you can either leave it disabled or just wait until this tutorial is finished to actually ALLOW
+for prestige.
