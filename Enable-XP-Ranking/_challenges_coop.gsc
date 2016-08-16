@@ -13,8 +13,7 @@
 		mod.csv:
 		Add:
 			stringtable,mp/ranktable.csv
-			localize,bo3_ranks,,
-		
+
 		mapname.gsc:
 		Add:
 			players = getPlayers();
