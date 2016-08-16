@@ -277,7 +277,10 @@ rank_init()
 	level.rankTable = [];
 
 	level.maxRank = int(tableLookup( "mp/rankTable.csv", 0, "maxrank", 1 ));
-	level.maxPrestige = int(tableLookup( "mp/rankTable.csv", 0, "maxprestige", 1 ));
+	if (level.zombie_vars[ "xp_prestige" ] == true)
+		level.maxPrestige = int(tableLookup( "mp/rankTable.csv", 0, "maxprestige", 1 ));
+	else	
+		level.maxPrestige = 0;
 
 	pId = 0;
 	rId = 0;
