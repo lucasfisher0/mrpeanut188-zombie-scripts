@@ -468,7 +468,7 @@ getRankInfoMaxXp( rankId )
 
 getRankInfoFull( rankId )
 {
-	return tableLookupIString( "mp/ranktable.csv", 0, rankId, 16 );
+	return tableLookupIString( "mp/ranktable.csv", 0, rankId, 5 );
 }
 
 getRankInfoIcon( rankId, prestigeId )
