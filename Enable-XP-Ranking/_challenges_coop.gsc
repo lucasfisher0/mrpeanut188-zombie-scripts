@@ -1,32 +1,40 @@
 //|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 //|||| Name		: _challenges_coop.gsc
-//|||| Info		: Enables XP ranking for zombies. No credit required.
+//|||| Info		: Enables XP ranking for zombies. Credit: Marvel4
 //|||| Site		: aviacreations.com
-//|||| Author		: Mrpeanut188
-//|||| Notes		: v4 (Proper offline ranking)
+//|||| Author		: Mrpeanut188 (Credit required to Marvel4 if using v5+)
+//|||| Notes		: v5 (BO3 Levels)
 //|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 /*
-	Installation:
-		Place in mods/MAPNAME/maps and replace if necessary. If an end user gets a crash about unknown function
-		unlockAttachment, they are using a mod menu.
+	Installation
+		Place in mods/MAPNAME/maps and replace if necessary.
+		Place ranktable.csv from this folder) into mods/MAPNAME/mp. Include in .IWD.
+		
+		mod.csv:
+		Add:
+			stringtable,mp/ranktable.csv
+			localize,bo3_ranks,,
 		
 		mapname.gsc:
+		Add:
 			players = getPlayers();
 			for (i = 0; i < players.size; i++)
 				players[i] thread maps\_challenges_coop::xpWatcher();
 		
 		_zombiemode_spawner.gsc:
 		Add:
-			maps\_challenges_coop::setXPReward( zombie.attacker, zombie.damageloc, zombie.damagemod );
+			maps\_challenges_coop::setXPReward( zombie.attacker, zombie.damagelocation, zombie.damagemod );
 		
 		Before: 
 			zombie.attacker notify("zom_kill");
 		
 		After:
-			maps\_challenges_coop::setXPReward( zombie.attacker, zombie.damageloc, zombie.damagemod );
+			maps\_challenges_coop::setXPReward( zombie.attacker, zombie.damagelocation, zombie.damagemod );
 			zombie.attacker notify("zom_kill");
 			
 		Change the settings below to fit your preference.
+		Remember to compile mod .FF and .IWD files.
+		To enable Prestige, please see the instructions contained in the parent folder.
 
 	Script usage:
 		Call any of the following on a player
@@ -42,10 +50,12 @@ init()
 {
 
 	// ================================= SETTINGS =================================
-	level.zombie_vars[ "xp_base" ] 			= 5; 		// XP awarded per kill
-	level.zombie_vars[ "xp_headshot" ] 		= 8; 		// XP awarded per headshot kill
-	level.zombie_vars[ "xp_knife" ] 		= 12; 		// XP awarded per melee kill
+	level.zombie_vars[ "xp_base" ] 			= 75; 		// XP awarded per kill
+	level.zombie_vars[ "xp_headshot" ] 		= 125; 		// XP awarded per headshot kill
+	level.zombie_vars[ "xp_knife" ] 		= 150; 		// XP awarded per melee kill
+	level.zombie_vars[ "xp_revive" ]		= 300;		// XP rewarded per revive --not implemented
 	level.zombie_vars[ "xp_announce" ] 		= false; 	// Show rank-up message in the game
+	level.zombie_vars[ "xp_prestige" ] 		= false; 	// True if adding prestige button
 	// ================================= SETTINGS =================================
 
 	rank_init();
@@ -59,7 +69,9 @@ init()
 
 setXPReward( player, damageloc, damagemod )
 {
-	if ( damagemod == "MOD_HEAD_SHOT" )
+	player.xpReward = level.zombie_vars[ "xp_base" ];
+	
+	if ( damageloc == "head" || damageloc == "neck" || damageloc == "helmet")
 		player.xpReward = level.zombie_vars[ "xp_headshot" ];
 	if ( damagemod == "MOD_MELEE" )
 		player.xpReward = level.zombie_vars[ "xp_knife" ];
@@ -73,6 +85,7 @@ xpWatcher()
 	{
 		self waittill( "zom_kill" );
 		giveRankXP( self.xpReward );
+		xpReward = level.zombie_vars[ "xp_base" ];
 	}
 }
 
@@ -264,7 +277,7 @@ rank_init()
 	level.rankTable = [];
 
 	level.maxRank = int(tableLookup( "mp/rankTable.csv", 0, "maxrank", 1 ));
-	level.maxPrestige = int(tableLookup( "mp/rankIconTable.csv", 0, "maxprestige", 1 ));
+	level.maxPrestige = int(tableLookup( "mp/rankTable.csv", 0, "maxprestige", 1 ));
 
 	pId = 0;
 	rId = 0;
@@ -272,7 +285,10 @@ rank_init()
 	for ( pId = 0; pId <= level.maxPrestige; pId++ )
 	{
 		for ( rId = 0; rId <= level.maxRank; rId++ )
-			precacheShader( tableLookup( "mp/rankIconTable.csv", 0, rId, pId+1 ) );
+		{
+			println( "Precache: Rank " + pId  + " - " + rId + " shader " + tableLookup( "mp/rankTable.csv", 0, rId, pId+13 ) );
+			precacheShader( tableLookup( "mp/rankTable.csv", 0, rId, pId+13 ) );
+		}
 	}
 
 	rankId = 0;
@@ -315,6 +331,7 @@ giveRankXP( value, levelEnd )
 	value = int( value * level.xpScale );
 
 	self incRankXP( value );
+	println( "Gave " + value + " xp." );
 
 	if ( updateRank() && levelEnd == false && level.zombie_vars[ "xp_announce" ] == true)
 		self thread updateRankAnnounceHUD();
@@ -460,7 +477,7 @@ getRankInfoFull( rankId )
 
 getRankInfoIcon( rankId, prestigeId )
 {
-	return tableLookup( "mp/rankIconTable.csv", 0, rankId, prestigeId+1 );
+	return tableLookup( "mp/rankTable.csv", 0, rankId, prestigeId+5 );
 }
 
 incRankXP( amount )
