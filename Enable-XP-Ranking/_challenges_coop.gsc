@@ -3,7 +3,7 @@
 //|||| Info		: Enables XP ranking for zombies. Credit: Marvel4
 //|||| Site		: aviacreations.com
 //|||| Author		: Mrpeanut188 (Credit required to Marvel4 if using v5+)
-//|||| Notes		: v5 (BO3 Levels)
+//|||| Notes		: v5 Bug-squish Edition (BO3 Levels)
 //|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 /*
 	Installation
