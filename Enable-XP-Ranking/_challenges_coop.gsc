@@ -3,17 +3,22 @@
 //|||| Info		: Enables XP ranking for zombies. Credit: Marvel4
 //|||| Site		: aviacreations.com
 //|||| Author		: Mrpeanut188 (Credit required to Marvel4 if using v5+)
-//|||| Notes		: v5 Bug-squish Edition (BO3 Levels)
+//|||| Notes		: v5.5 (BO3 Levels)
 //|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 /*
 	Installation
 		Place in mods/MAPNAME/maps and replace if necessary.
-		Place ranktable.csv from this folder) into mods/MAPNAME/mp. Include in .IWD.
+		Place ranktable.csv into mods/MAPNAME/mp. Include in .IWD.
+		(ranktable.csv is in the same folder as this file.)
 		
 		mod.csv:
 		Add:
 			stringtable,mp/ranktable.csv
-
+			material,rank_private
+			material,rank_corporal
+			material,rank_major
+			material,rank_lieutenant
+		
 		mapname.gsc:
 		Add:
 			players = getPlayers();
@@ -30,6 +35,60 @@
 		After:
 			maps\_challenges_coop::setXPReward( zombie.attacker, zombie.damagelocation, zombie.damagemod );
 			zombie.attacker notify("zom_kill");
+			
+		_zombiemode_blockers_new.gsc:
+		Add:
+			who notify( "door_purchased" );
+			
+		Example:
+			if( is_player_valid( who ) )
+			{
+				if( who.score >= self.zombie_cost )
+				{
+					who notify( "door_purchased" );
+					// set the score
+					who maps\_zombiemode_score::minus_to_player_score( self.zombie_cost ); 
+					if( isDefined( level.achievement_notify_func ) )
+					{
+						level [[ level.achievement_notify_func ]]( "DLC3_ZOMBIE_ALL_DOORS" );
+					}
+					bbPrint( "zombie_uses: playername %s playerscore %d round %d cost %d name %s x %f y %f z %f type door", who.playername, who.score, level.round_number, self.zombie_cost, self.target, self.origin );
+				}
+				else // Not enough money
+				{
+					play_sound_at_pos( "no_purchase", self.doors[0].origin );
+					// who thread maps\_zombiemode_perks::play_no_money_perk_dialog();
+					continue;
+				}
+			}
+			
+		_zombiemode.gsc:
+		Add:
+			reviver notify( "revive_bonus" );
+		
+		Example:
+			player_revive_monitor()
+			{
+				self endon( "disconnect" ); 
+
+				while (1)
+				{
+					self waittill( "player_revived", reviver );	
+
+					if ( IsDefined(reviver) )
+					{
+						// Check to see how much money you lost from being down.
+						points = self.score_lost_when_downed;
+						if ( points > 300 )
+						{
+							points = 300;
+						}
+						reviver notify( "revive_bonus" );
+						reviver maps\_zombiemode_score::add_to_player_score( points );
+						self.score_lost_when_downed = 0;
+					}
+				}
+			}
 			
 		Change the settings below to fit your preference.
 		Remember to compile mod .FF and .IWD files.
@@ -52,9 +111,9 @@ init()
 	level.zombie_vars[ "xp_base" ] 			= 75; 		// XP awarded per kill
 	level.zombie_vars[ "xp_headshot" ] 		= 100; 		// XP awarded per headshot kill
 	level.zombie_vars[ "xp_knife" ] 		= 125; 		// XP awarded per melee kill
-	level.zombie_vars[ "xp_revive" ]		= 300;		// XP rewarded per revive --UNIMPLEMENTED
+	level.zombie_vars[ "xp_revive" ]		= 300;		// XP rewarded per revive
 	level.zombie_vars[ "xp_round_bonus" ]		= 50;		// XP rewarded for surviving a round
-	level.zombie_vars[ "xp_door_bonus" ]		= 250;		// XP rewarded for purchasing a door --UNIMPLEMENTED
+	level.zombie_vars[ "xp_door_bonus" ]		= 250;		// XP rewarded for purchasing a door
 	level.zombie_vars[ "xp_announce" ] 		= false; 	// Show rank-up message in the game
 	level.zombie_vars[ "xp_prestige" ] 		= false; 	// True if adding prestige button
 	// ================================= SETTINGS =================================
@@ -82,6 +141,8 @@ xpWatcher()
 {
 	self endon( "disconnect" );
 	self thread roundReward();
+	self thread doorReward();
+	self thread reviveReward();
 	
 	while (1)
 	{
@@ -104,6 +165,29 @@ roundReward()
 			self giveRankXP( level.zombie_vars[ "xp_round_bonus" ] * (level.round_number - 1) );
 	}
 }
+
+doorReward()
+{
+	self endon( "disconnect" );
+	
+	while (1)
+	{
+		self waittill( "door_purchased" );
+		self giveRankXP( level.zombie_vars[ "xp_door_bonus" ] );
+	}
+}
+
+reviveReward()
+{
+	self endon( "disconnect" );
+	
+	while (1)
+	{
+		self waittill( "revive_bonus" );
+		self giveRankXP( level.zombie_vars[ "xp_revive" ] );
+	}
+}
+
 mayGenerateAfterActionReport()
 {	
 	if ( isCoopEPD() )
@@ -332,9 +416,6 @@ rank_init()
 	precacheString( &"RANK_PLAYER_WAS_PROMOTED" );
 	precacheString( &"RANK_PROMOTED" );
 	precacheString( &"MP_PLUS" );
-	precacheString( &"RANK_ROMANI" );
-	precacheString( &"RANK_ROMANII" );
-	precacheString( &"RANK_ROMANIII" );
 }
 
 giveRankXP( value, levelEnd )
@@ -376,9 +457,11 @@ updateRankAnnounceHUD()
 	notifyData.duration = 4.0;
 	
 	rank_char = level.rankTable[self.rank][1];
-	subRank = int(rank_char[rank_char.size-1]);
 	notifyData.notifyText = newRankName;
 
+	println( "Rankup! You are now rank " + newRankName + "!");
+	println( "The shader for your new rank is " + notifyData.iconName + " ." );
+	
 	self thread maps\_hud_message::notifyMessage( notifyData );
 }
 
@@ -468,7 +551,7 @@ getRankInfoMaxXp( rankId )
 
 getRankInfoFull( rankId )
 {
-	return tableLookupIString( "mp/ranktable.csv", 0, rankId, 5 );
+	return tableLookup( "mp/ranktable.csv", 0, rankId, 5 );
 }
 
 getRankInfoIcon( rankId, prestigeId )
