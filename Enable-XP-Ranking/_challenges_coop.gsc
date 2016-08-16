@@ -3,7 +3,7 @@
 //|||| Info		: Enables XP ranking for zombies. Credit: Marvel4
 //|||| Site		: aviacreations.com
 //|||| Author		: Mrpeanut188 (Credit required to Marvel4 if using v5+)
-//|||| Notes		: v5 (BO3 Levels). Rank Icons are broken in online lobbies, fine in-game.
+//|||| Notes		: v5 (BO3 Levels)
 //|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 /*
 	Installation
@@ -54,7 +54,7 @@ init()
 	level.zombie_vars[ "xp_headshot" ] 		= 100; 		// XP awarded per headshot kill
 	level.zombie_vars[ "xp_knife" ] 		= 125; 		// XP awarded per melee kill
 	level.zombie_vars[ "xp_revive" ]		= 300;		// XP rewarded per revive
-	level.zombie_vars[ "xp_round_bonus" ]		= 50;		// XP rewarded for surviving a round
+	level.zombie_vars[ "xp_round_bonus" ]	= 50;		// XP rewarded for surviving a round
 	level.zombie_vars[ "xp_announce" ] 		= false; 	// Show rank-up message in the game
 	level.zombie_vars[ "xp_prestige" ] 		= false; 	// True if adding prestige button
 	// ================================= SETTINGS =================================
@@ -95,10 +95,13 @@ roundReward()
 {
 	self endon( "disconnect" );
 	
-	while (level.round_number <= 21)
+	while (1)
 	{
 		level waittill( "between_round_over" );
-		self giveRankXP( level.zombie_vars[ "xp_round_bonus" ] * (level.round_number - 1) );
+		if (level.round_number > 21)
+			self giveRankXP( 1000 );
+		else
+			self giveRankXP( level.zombie_vars[ "xp_round_bonus" ] * (level.round_number - 1) );
 	}
 }
 mayGenerateAfterActionReport()
@@ -329,6 +332,9 @@ rank_init()
 	precacheString( &"RANK_PLAYER_WAS_PROMOTED" );
 	precacheString( &"RANK_PROMOTED" );
 	precacheString( &"MP_PLUS" );
+	precacheString( &"RANK_ROMANI" );
+	precacheString( &"RANK_ROMANII" );
+	precacheString( &"RANK_ROMANIII" );
 }
 
 giveRankXP( value, levelEnd )
@@ -467,7 +473,7 @@ getRankInfoFull( rankId )
 
 getRankInfoIcon( rankId, prestigeId )
 {
-	return tableLookup( "mp/rankTable.csv", 0, rankId, prestigeId+5 );
+	return tableLookup( "mp/rankTable.csv", 0, rankId, prestigeId+13 );
 }
 
 incRankXP( amount )
