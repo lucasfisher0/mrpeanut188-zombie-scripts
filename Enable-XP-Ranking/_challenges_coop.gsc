@@ -54,7 +54,7 @@ init()
 	level.zombie_vars[ "xp_headshot" ] 		= 100; 		// XP awarded per headshot kill
 	level.zombie_vars[ "xp_knife" ] 		= 125; 		// XP awarded per melee kill
 	level.zombie_vars[ "xp_revive" ]		= 300;		// XP rewarded per revive
-	level.zombie_vars[ "xp_round_bonus" ]	= 50;		// XP rewarded for surviving a round
+	level.zombie_vars[ "xp_round_bonus" ]		= 50;		// XP rewarded for surviving a round
 	level.zombie_vars[ "xp_announce" ] 		= false; 	// Show rank-up message in the game
 	level.zombie_vars[ "xp_prestige" ] 		= false; 	// True if adding prestige button
 	// ================================= SETTINGS =================================
@@ -95,10 +95,10 @@ roundReward()
 {
 	self endon( "disconnect" );
 	
-	while (level.round_number <= 20)
+	while (level.round_number <= 21)
 	{
 		level waittill( "between_round_over" );
-		self giveRankXP( level.zombie_vars[ "xp_round_bonus" ] * level.round_number );
+		self giveRankXP( level.zombie_vars[ "xp_round_bonus" ] * (level.round_number - 1) );
 	}
 }
 mayGenerateAfterActionReport()
