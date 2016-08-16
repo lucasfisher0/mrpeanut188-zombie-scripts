@@ -329,9 +329,6 @@ rank_init()
 	precacheString( &"RANK_PLAYER_WAS_PROMOTED" );
 	precacheString( &"RANK_PROMOTED" );
 	precacheString( &"MP_PLUS" );
-	precacheString( &"RANK_ROMANI" );
-	precacheString( &"RANK_ROMANII" );
-	precacheString( &"RANK_ROMANIII" );
 }
 
 giveRankXP( value, levelEnd )
@@ -374,29 +371,7 @@ updateRankAnnounceHUD()
 	
 	rank_char = level.rankTable[self.rank][1];
 	subRank = int(rank_char[rank_char.size-1]);
-	
-	if ( subRank == 2 )
-	{
-		notifyData.textLabel = newRankName;
-		notifyData.notifyText = &"RANK_ROMANI";
-		notifyData.textIsString = true;
-	}
-	else if ( subRank == 3 )
-	{
-		notifyData.textLabel = newRankName;
-		notifyData.notifyText = &"RANK_ROMANII";
-		notifyData.textIsString = true;
-	}
-	else if ( subRank == 4 )
-	{
-		notifyData.textLabel = newRankName;
-		notifyData.notifyText = &"RANK_ROMANIII";
-		notifyData.textIsString = true;
-	}
-	else
-	{
-		notifyData.notifyText = newRankName;
-	}
+	notifyData.notifyText = newRankName;
 
 	self thread maps\_hud_message::notifyMessage( notifyData );
 }
