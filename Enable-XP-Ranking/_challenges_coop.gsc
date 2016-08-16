@@ -62,6 +62,35 @@
 				}
 			}
 			
+		Add:
+			who notify( "door_purchased" );
+		
+		Example:
+			if( is_player_valid( who ) )
+			{
+				if( who.score >= self.zombie_cost )
+				{
+					who notify( "door_purchased" );
+					// set the score
+					who maps\_zombiemode_score::minus_to_player_score( self.zombie_cost ); 
+					if( isDefined( level.achievement_notify_func ) )
+					{
+						level [[ level.achievement_notify_func ]]( "DLC3_ZOMBIE_ALL_DOORS" );
+					}
+					bbPrint( "zombie_uses: playername %s playerscore %d round %d cost %d name %s x %f y %f z %f type debris", who.playername, who.score, level.round_number, self.zombie_cost, self.target, self.origin );
+					
+					// delete the stuff
+					
+					self thread debris_move_start();
+					break; 								
+				}
+				else
+				{
+					play_sound_at_pos( "no_purchase", self.origin );
+					// who thread maps\nazi_zombie_sumpf_blockers::play_no_money_purchase_dialog();
+				}
+			}
+			
 		_zombiemode.gsc:
 		Add:
 			reviver notify( "revive_bonus" );
