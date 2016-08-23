@@ -20,7 +20,7 @@
 			material,rank_lieutenant
 		
 		mapname.gsc:
-		Add:
+		Add to the end of Main():
 			players = getPlayers();
 			for (i = 0; i < players.size; i++)
 				players[i] thread maps\_challenges_coop::xpWatcher();
