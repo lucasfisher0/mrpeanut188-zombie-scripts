@@ -2,7 +2,7 @@
 //|||| Name		: _revolver_reload.gsc
 //|||| Info		: Forces reload from empty after firing.
 //|||| Site		: aviacreations.com
-//|||| Author		: Mrpeanut188 (Credit required, see thread.)
+//|||| Author		: Mrpeanut188 (No credit required for use.)
 //|||| Notes		: 
 //|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 /*
