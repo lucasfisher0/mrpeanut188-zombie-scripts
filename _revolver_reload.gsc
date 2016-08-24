@@ -14,14 +14,14 @@
 		Add at the end of Main():
 			players = getPlayers();
 			for (i = 0; i < players.size; i++)
-				players[i] thread maps\_revolver_reload::Init();
+				players[i] thread maps\_revolver_reload::init();
 */
 
 #include maps\_utility; 
 #include common_scripts\utility; 
 #include maps\_zombiemode_utility;
 
-Init()
+init()
 {
 	self thread cofWeaponRevolver();
 }
